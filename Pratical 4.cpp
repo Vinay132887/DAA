@@ -1,59 +1,66 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
 #include <chrono>
 
 using namespace std;
-using namespace chrono;
+using namespace std::chrono;
+
+// Iterative Factorial using while loop
+unsigned long long factorialWhile(int n)
+{
+    unsigned long long result = 1;
+
+    while (n > 0)
+    {
+        result *= n;
+        n--;
+    }
+
+    return result;
+}
+
+// Recursive Factorial
+unsigned long long factorialRecursive(int n)
+{
+    if (n <= 1)
+        return 1;
+
+    return n * factorialRecursive(n - 1);
+}
 
 int main()
 {
-    int n = 100000;
-    vector<int> arr;
+    int n;
 
-    // Store numbers from 1 to 100000
-    for (int i = 1; i <= n; i++)
+    cout << "Enter a non-negative integer (e.g., 20): ";
+    cin >> n;
+
+    if (n < 0)
     {
-        arr.push_back(i);
+        cout << "Invalid input! Please enter a non-negative integer.";
+        return 1;
     }
 
-    int key;
-    cout << "Enter element to search: ";
-    cin >> key;
+    // Measure While Loop
+    auto startWhile = high_resolution_clock::now();
+    unsigned long long resWhile = factorialWhile(n);
+    auto endWhile = high_resolution_clock::now();
 
-    // Linear Search using find()
-    auto start = high_resolution_clock::now();
+    duration<double, nano> durationWhile = endWhile - startWhile;
 
-    auto it = find(arr.begin(), arr.end(), key);
+    // Measure Recursive
+    auto startRec = high_resolution_clock::now();
+    unsigned long long resRec = factorialRecursive(n);
+    auto endRec = high_resolution_clock::now();
 
-    auto stop = high_resolution_clock::now();
+    duration<double, nano> durationRec = endRec - startRec;
 
-    cout << "\nLinear Search\n";
-    if (it != arr.end())
-        cout << "Element found at index " << (it - arr.begin()) << endl;
-    else
-        cout << "Element not found" << endl;
-
-    cout << "Time Taken: "
-         << duration_cast<microseconds>(stop - start).count()
-         << " microseconds\n";
-
-    // Binary Search using binary_search()
-    start = high_resolution_clock::now();
-
-    bool found = binary_search(arr.begin(), arr.end(), key);
-
-    stop = high_resolution_clock::now();
-
-    cout << "\nBinary Search\n";
-    if (found)
-        cout << "Element found at index " << (it - arr.begin())<< endl;
-    else
-        cout << "Element not found" << endl;
-
-    cout << "Time Taken: "
-         << duration_cast<microseconds>(stop - start).count()
-         << " microseconds\n";
+    // Output
+    cout << "\n--- Results for " << n << "! ---" << endl;
+    cout << "While Loop Result : " << resWhile << endl;
+    cout << "While Loop Time   : " << durationWhile.count() << " ns" << endl;
+    cout << "-------------------------------" << endl;
+    cout << "Recursive Result  : " << resRec << endl;
+    cout << "Recursive Time    : " << durationRec.count() << " ns" << endl;
 
     return 0;
 }
